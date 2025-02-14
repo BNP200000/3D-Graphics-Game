@@ -20,7 +20,7 @@ public class MazeGenerator : MonoBehaviour
         {
             for(int k = 0; k < mazeDepth; k++)
             {
-                mazeGrid[i,k] = Instantiate(mazeCell, new Vector3(i, 0, k), Quaternion.identity);
+                mazeGrid[i,k] = Instantiate(mazeCell, new Vector3(i, 0, k), Quaternion.identity, transform);
             }
         }
 
@@ -31,7 +31,7 @@ public class MazeGenerator : MonoBehaviour
     {
         currCell.Visit();
         ClearWalls(prevCell, currCell);
-        
+
         MazeCell nextCell;
 
         do 
