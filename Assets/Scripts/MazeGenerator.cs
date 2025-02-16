@@ -135,7 +135,19 @@ public class MazeGenerator : MonoBehaviour
 
         MazeCell[] exits = {topLeft, bottomLeft, bottomRight};
         int index = Random.Range(0, exits.Length);
-        exits[index].gameObject.SetActive(false);
+
+        GameObject exit = exits[index].gameObject;
+        List<GameObject> children = new List<GameObject>();
+        foreach(Transform child in exit.transform)
+        {
+            if(child.gameObject.activeSelf)
+            {
+                children.Add(child.gameObject);
+            }
+        }
+
+        GameObject exitPoint = children[Random.Range(0, children.Count)];
+        exitPoint.SetActive(false);
     }
 
     // Update is called once per frame
