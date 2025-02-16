@@ -14,6 +14,7 @@ public class MazeGenerator : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
         mazeGrid = new MazeCell[mazeWidth, mazeDepth];
 
         for(int i = 0; i < mazeWidth; i++) 
@@ -26,6 +27,7 @@ public class MazeGenerator : MonoBehaviour
 
         GenerateMaze(null, mazeGrid[0, 0]);
         CreateExit(mazeGrid);
+        transform.localScale = new Vector3(3f, 3f, 3f);
     }
 
     void GenerateMaze(MazeCell prevCell, MazeCell currCell) 
