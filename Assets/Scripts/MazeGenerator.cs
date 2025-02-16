@@ -25,6 +25,7 @@ public class MazeGenerator : MonoBehaviour
         }
 
         GenerateMaze(null, mazeGrid[0, 0]);
+        CreateExit(mazeGrid);
     }
 
     void GenerateMaze(MazeCell prevCell, MazeCell currCell) 
@@ -124,6 +125,17 @@ public class MazeGenerator : MonoBehaviour
             currCell.ClearFrontWall();
             return;
         }
+    }
+
+    void CreateExit(MazeCell[,] mazeGrid) 
+    {
+        MazeCell topLeft = mazeGrid[mazeDepth - 1, 0];
+        MazeCell bottomRight = mazeGrid[mazeDepth - 1, 0];
+        MazeCell bottomLeft = mazeGrid[mazeWidth - 1, mazeDepth - 1];
+
+        MazeCell[] exits = {topLeft, bottomLeft, bottomRight};
+        int index = Random.Range(0, exits.Length);
+        exits[index].gameObject.SetActive(false);
     }
 
     // Update is called once per frame
