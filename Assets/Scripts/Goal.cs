@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Goal : MonoBehaviour
 {
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision other)
     {
         if(other.gameObject.tag == "Player") {
             Debug.Log("VICTORY");
