@@ -11,6 +11,8 @@ public class MazeGenerator : MonoBehaviour
 
     MazeCell[,] mazeGrid;
 
+    [SerializeField] GameObject goalPost;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -155,6 +157,10 @@ public class MazeGenerator : MonoBehaviour
         }
 
         GameObject exitPoint = children[Random.Range(0, children.Count)];
+
+        GameObject goal = Instantiate(goalPost, exitPoint.transform.position, exitPoint.transform.rotation, exit.transform);
+        //goal.transform.localScale = exitPoint.transform.localScale;
+
         exitPoint.SetActive(false);
     }
 }
