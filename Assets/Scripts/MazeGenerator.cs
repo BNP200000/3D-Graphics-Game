@@ -7,7 +7,7 @@ public class MazeGenerator : MonoBehaviour
 {
     [SerializeField] MazeCell mazeCell;
 
-    [SerializeField] int mazeWidth, mazeDepth;
+    [SerializeField] int mazeWidth, mazeDepth; // Maze dimension
 
     MazeCell[,] mazeGrid;
 
@@ -26,10 +26,12 @@ public class MazeGenerator : MonoBehaviour
         }
 
         GenerateMaze(null, mazeGrid[0, 0]);
-        CreateExit(mazeGrid);
+        CreateExit();
         transform.localScale = new Vector3(3f, 3f, 3f);
     }
 
+    // Generate a maze using a DFS algorithm via preorder traversal
+    // Visit a cell and then go to the next neighboring cell
     void GenerateMaze(MazeCell prevCell, MazeCell currCell) 
     {
         currCell.Visit();
@@ -48,12 +50,14 @@ public class MazeGenerator : MonoBehaviour
 
     }
 
+    // Randomy choose an unvisited neighboring cell from the current cell
     MazeCell GetNextUnvisitedCell(MazeCell currCell) 
     {
         var unvisitedCells = GetUnvisitedCells(currCell);
         return unvisitedCells.OrderBy(_ => Random.Range(1, 10)).FirstOrDefault();
     }
 
+    // Get all unvisited cells neighboring the given cell
     IEnumerable<MazeCell> GetUnvisitedCells(MazeCell currCell)
     {
         int x = (int)currCell.transform.position.x;
@@ -96,6 +100,7 @@ public class MazeGenerator : MonoBehaviour
         }
     }
 
+    // Clear the neighboring walls of the previous and current cell
     void ClearWalls(MazeCell prevCell, MazeCell currCell) 
     {
         if(prevCell == null) {return;}
@@ -129,13 +134,14 @@ public class MazeGenerator : MonoBehaviour
         }
     }
 
-    void CreateExit(MazeCell[,] mazeGrid) 
+    // Create a randomized exit placed at any edge point of the grid
+    void CreateExit() 
     {
-        MazeCell topLeft = mazeGrid[mazeDepth - 1, 0];
-        MazeCell bottomRight = mazeGrid[mazeDepth - 1, 0];
-        MazeCell bottomLeft = mazeGrid[mazeWidth - 1, mazeDepth - 1];
-
-        MazeCell[] exits = {topLeft, bottomLeft, bottomRight};
+        MazeCell[] exits = {
+            mazeGrid[mazeDepth - 1, 0], // Top right
+            mazeGrid[mazeWidth - 1, mazeDepth - 1], // Bottom right
+            mazeGrid[0, mazeDepth - 1] // Bottom left
+        };
         int index = Random.Range(0, exits.Length);
 
         GameObject exit = exits[index].gameObject;
@@ -150,11 +156,5 @@ public class MazeGenerator : MonoBehaviour
 
         GameObject exitPoint = children[Random.Range(0, children.Count)];
         exitPoint.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
