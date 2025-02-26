@@ -157,6 +157,7 @@ public class MazeGenerator : MonoBehaviour
         }
 
         GameObject exitPoint = children[Random.Range(0, children.Count)];
+        
 
         GameObject goal = Instantiate(goalPost, exitPoint.transform.position, exitPoint.transform.rotation, exit.transform);
         //goal.transform.localScale = exitPoint.transform.localScale;
