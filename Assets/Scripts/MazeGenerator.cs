@@ -11,7 +11,7 @@ public class MazeGenerator : MonoBehaviour
 
     MazeCell[,] mazeGrid;
 
-    [SerializeField] GameObject goalPost;
+    [SerializeField] Material goalMaterial;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -157,11 +157,30 @@ public class MazeGenerator : MonoBehaviour
         }
 
         GameObject exitPoint = children[Random.Range(0, children.Count)];
+
+        Transform exitChild = exitPoint.transform.GetChild(0);
+        MeshRenderer exitRenderer = exitChild.GetComponent<MeshRenderer>();
+        exitRenderer.material = goalMaterial;
         
+        // Change the z scale of the exit point so that it doesn't look weird
+        exitChild.transform.localScale = new Vector3(
+            exitChild.transform.localScale.x,
+            exitChild.transform.localScale.y,
+            0.8f
+        );
 
-        GameObject goal = Instantiate(goalPost, exitPoint.transform.position, exitPoint.transform.rotation, exit.transform);
-        //goal.transform.localScale = exitPoint.transform.localScale;
+        // Scale the box collider to fit 
+        BoxCollider boxCollider = exitPoint.GetComponent<BoxCollider>();
+        if(boxCollider == null) {
+            return;
+        }
 
-        exitPoint.SetActive(false);
+        Vector3 newSize = boxCollider.size;
+        newSize.z = 0.8f;
+        boxCollider.size = newSize;
+
+        // Attach the goal script
+        exitPoint.AddComponent<Goal>();
+        exitPoint.tag = "Goal";
     }
 }
