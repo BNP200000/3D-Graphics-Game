@@ -4,13 +4,11 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public static bool paused; // Check if paused
-    public static bool inGame; // Check if in-game
+    public static bool paused = false; // Check if paused
 
-    void Awake()
-    {
-        MakeSingleton();
-    }
+    [SerializeField] GameObject pauseUI;
+    [SerializeField] GameObject gameUI;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,50 +19,64 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GameFlow();
+        Reload();
+        PauseMenu();
     }
 
-    public void Load()
+    void Reload()
+    {
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+    }
+
+    public void LoadGame()
     {
         SceneManager.LoadScene("Game");
-        Time.timeScale = 1;
-        paused = false;
-        inGame = true;
     }
 
-    public void Exit()
+    void PauseMenu()
     {
-        Application.Quit();
-    }
-
-    void GameFlow()
-    {
-        if(Input.GetKeyDown(KeyCode.Escape) && inGame) 
+        if(Input.GetKeyDown(KeyCode.Escape))
         {
+            
             if(paused)
             {
-                Time.timeScale = 1;
-                paused = false;
-                inGame = true;
-            } 
+                Resume();
+            }
             else
             {
-                Time.timeScale = 0;
-                paused = true;
-                inGame = true;
+                Pause();
             }
         }
     }
 
-    void MakeSingleton()
+    public void Resume()
     {
-        if(instance != null)
-        {
-            Destroy(gameObject);
-        }
-        else 
-        {
-            instance = this;
-        }
+        pauseUI.SetActive(false);
+        gameUI.SetActive(true);
+        Time.timeScale = 1f;
+        paused = false;
     }
+
+    public void Exit()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Menu");
+    }
+
+    void Pause()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        pauseUI.SetActive(true);
+        gameUI.SetActive(false);
+        Time.timeScale = 0f;
+        paused = true;
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    } 
 }
