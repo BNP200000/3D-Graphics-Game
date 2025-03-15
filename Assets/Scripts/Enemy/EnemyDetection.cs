@@ -10,7 +10,7 @@ public class EnemyDetection : MonoBehaviour
     void Start()
     {
         // Find the player GameObject by tag
-        player = GameObject.FindWithTag("Player").transform;
+        player = GameObject.Find("Player").transform;
     }
 
     public bool IsPlayerDetected()

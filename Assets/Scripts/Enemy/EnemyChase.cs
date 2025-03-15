@@ -6,11 +6,12 @@ public class EnemyChase : MonoBehaviour
     public float chaseSpeed = 5f; // Speed at which the enemy chases the player
     private NavMeshAgent agent;
     private Transform player;
+    [SerializeField] float captureRange = 3.0f;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindWithTag("Player").transform;
+        player = GameObject.Find("Player").transform;
     }
 
     public void StartChasing()
@@ -28,5 +29,8 @@ public class EnemyChase : MonoBehaviour
     public void ChasePlayer()
     {
         agent.SetDestination(player.position); // Move toward the player
+        if(Vector3.Distance(transform.position, player.position) <= captureRange) {
+            Debug.Log("Captured");
+        }
     }
 }
