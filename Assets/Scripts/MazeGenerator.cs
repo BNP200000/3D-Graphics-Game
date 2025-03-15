@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Unity.AI.Navigation;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -13,10 +14,13 @@ public class MazeGenerator : MonoBehaviour
 
     [SerializeField] Material goalMaterial;
 
+    [SerializeField] int safeZone = 5;
+    [SerializeField] int enemyCount = 5;
+    [SerializeField] GameObject enemy;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
         mazeGrid = new MazeCell[mazeWidth, mazeDepth];
 
         for(int i = 0; i < mazeWidth; i++) 
@@ -24,12 +28,14 @@ public class MazeGenerator : MonoBehaviour
             for(int k = 0; k < mazeDepth; k++)
             {
                 mazeGrid[i,k] = Instantiate(mazeCell, new Vector3(i, 0, k), Quaternion.identity, transform);
+                mazeGrid[i,k].transform.localPosition = new Vector3(i, 0, k);
             }
         }
 
         GenerateMaze(null, mazeGrid[0, 0]);
+        GetComponent<NavMeshSurface>().BuildNavMesh();
         CreateExit();
-        transform.localScale = new Vector3(3f, 3f, 3f);
+        SpawnEnemy();
     }
 
     // Generate a maze using a DFS algorithm via preorder traversal
@@ -44,6 +50,7 @@ public class MazeGenerator : MonoBehaviour
         do 
         {
             nextCell = GetNextUnvisitedCell(currCell);
+            
             if(nextCell != null)
             {
                 GenerateMaze(currCell, nextCell);
@@ -62,8 +69,8 @@ public class MazeGenerator : MonoBehaviour
     // Get all unvisited cells neighboring the given cell
     IEnumerable<MazeCell> GetUnvisitedCells(MazeCell currCell)
     {
-        int x = (int)currCell.transform.position.x;
-        int z = (int)currCell.transform.position.z;
+        int x = (int)currCell.transform.localPosition.x;
+        int z = (int)currCell.transform.localPosition.z;
 
         if(x + 1 < mazeWidth)
         {
@@ -107,28 +114,28 @@ public class MazeGenerator : MonoBehaviour
     {
         if(prevCell == null) {return;}
 
-        if(prevCell.transform.position.x < currCell.transform.position.x)
+        if(prevCell.transform.localPosition.x < currCell.transform.localPosition.x)
         {
             prevCell.ClearRightWall();
             currCell.ClearLeftWall();
             return;
         }
 
-        if(prevCell.transform.position.x > currCell.transform.position.x)
+        if(prevCell.transform.localPosition.x > currCell.transform.localPosition.x)
         {
             prevCell.ClearLeftWall();
             currCell.ClearRightWall();
             return;
         }
 
-        if(prevCell.transform.position.z < currCell.transform.position.z)
+        if(prevCell.transform.localPosition.z < currCell.transform.localPosition.z)
         {
             prevCell.ClearFrontWall();
             currCell.ClearBackWall();
             return;
         }
 
-        if(prevCell.transform.position.z > currCell.transform.position.z)
+        if(prevCell.transform.localPosition.z > currCell.transform.localPosition.z)
         {
             prevCell.ClearBackWall();
             currCell.ClearFrontWall();
@@ -171,9 +178,7 @@ public class MazeGenerator : MonoBehaviour
 
         // Scale the box collider to fit 
         BoxCollider boxCollider = exitPoint.GetComponent<BoxCollider>();
-        if(boxCollider == null) {
-            return;
-        }
+        if(boxCollider == null) return;
 
         Vector3 newSize = boxCollider.size;
         newSize.z = 0.8f;
@@ -183,4 +188,45 @@ public class MazeGenerator : MonoBehaviour
         exitPoint.AddComponent<Goal>();
         exitPoint.tag = "Goal";
     }
+
+    void SpawnEnemy() 
+    {
+        float minDistance = 6f; 
+        float scaleFactor = transform.localScale.x;
+
+        List<MazeCell> validCells = new List<MazeCell>();
+
+        for (int i = 0; i < mazeWidth; i++) 
+        {
+            for (int j = 0; j < mazeDepth; j++) 
+            {
+                if (i < safeZone && j < safeZone) continue;
+                validCells.Add(mazeGrid[i, j]);
+            }
+        }
+
+        List<Vector3> enemyPositions = new List<Vector3>();
+
+        while (enemyPositions.Count < enemyCount && validCells.Count > 0)
+        {
+            int randomIndex = Random.Range(0, validCells.Count);
+            MazeCell selectedCell = validCells[randomIndex];
+
+            Vector3 spawnPos = new Vector3(
+                selectedCell.transform.localPosition.x * scaleFactor, 
+                0.5f, 
+                selectedCell.transform.localPosition.z * scaleFactor
+            );
+
+            bool tooClose = enemyPositions.Any(pos => Vector3.Distance(pos, spawnPos) < minDistance);
+            if (!tooClose) 
+            {
+                enemyPositions.Add(spawnPos);
+                int randIdx = Random.Range(0, enemyCount);
+                Instantiate(enemy, spawnPos, Quaternion.identity);
+                validCells.RemoveAt(randomIndex); 
+            }
+        }
+    }
+
 }
