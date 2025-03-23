@@ -5,11 +5,23 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public static bool paused = false; // Check if paused
+    public VictoryScreenManager victoryScreenManager;
 
     [SerializeField] GameObject pauseUI;
     [SerializeField] GameObject gameUI;
     [SerializeField] GameObject winUI;
 
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -30,6 +42,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadGame()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("Game");
     }
 
@@ -85,5 +98,10 @@ public class GameManager : MonoBehaviour
     public void Quit()
     {
         Application.Quit();
-    } 
+    }
+
+    public void PlayerWins()
+    {
+        victoryScreenManager.ShowVictoryScreen();
+    }
 }
