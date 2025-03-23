@@ -16,7 +16,6 @@ public class EnemyAI: MonoBehaviour
         enemyChase = GetComponent<EnemyChase>();
     }
 
-
     void Update()
     {
         // Check if the player is detected

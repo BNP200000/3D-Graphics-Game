@@ -5,10 +5,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public static bool paused = false; // Check if paused
-    public VictoryScreenManager victoryScreenManager;
+    //public VictoryScreenManager victoryScreenManager;
 
     [SerializeField] GameObject pauseUI;
     [SerializeField] GameObject gameUI;
+    [SerializeField] GameObject winUI;
 
     void Awake()
     {
@@ -34,10 +35,10 @@ public class GameManager : MonoBehaviour
         PauseMenu();
     }
 
-    /*public void Reload()
+    public void Reload()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }*/
+    }
 
     public void LoadGame()
     {
@@ -49,7 +50,6 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            
             if(paused)
             {
                 Resume();
@@ -78,7 +78,18 @@ public class GameManager : MonoBehaviour
     void Pause()
     {
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         pauseUI.SetActive(true);
+        gameUI.SetActive(false);
+        Time.timeScale = 0f;
+        paused = true;
+    }
+
+    public void PlayerWins()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        winUI.SetActive(true);
         gameUI.SetActive(false);
         Time.timeScale = 0f;
         paused = true;
@@ -89,8 +100,8 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void PlayerWins()
+    /*public void PlayerWins()
     {
         victoryScreenManager.ShowVictoryScreen();
-    }
+    }*/
 }
