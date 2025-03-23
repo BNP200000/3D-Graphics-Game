@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public static bool paused = false; // Check if paused
-    public VictoryScreenManager victoryScreenManager;
+    //public VictoryScreenManager victoryScreenManager;
 
     [SerializeField] GameObject pauseUI;
     [SerializeField] GameObject gameUI;
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
         paused = true;
     }
 
-    public void Victory()
+    public void PlayerWins()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -100,8 +100,8 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void PlayerWins()
+    /*public void PlayerWins()
     {
         victoryScreenManager.ShowVictoryScreen();
-    }
+    }*/
 }
