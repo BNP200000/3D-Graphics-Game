@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] GameObject pauseUI;
     [SerializeField] GameObject gameUI;
+    [SerializeField] GameObject winUI;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -22,10 +23,10 @@ public class GameManager : MonoBehaviour
         PauseMenu();
     }
 
-    /*public void Reload()
+    public void Reload()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }*/
+    }
 
     public void LoadGame()
     {
@@ -36,7 +37,6 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            
             if(paused)
             {
                 Resume();
@@ -65,7 +65,18 @@ public class GameManager : MonoBehaviour
     void Pause()
     {
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         pauseUI.SetActive(true);
+        gameUI.SetActive(false);
+        Time.timeScale = 0f;
+        paused = true;
+    }
+
+    public void Victory()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        winUI.SetActive(true);
         gameUI.SetActive(false);
         Time.timeScale = 0f;
         paused = true;

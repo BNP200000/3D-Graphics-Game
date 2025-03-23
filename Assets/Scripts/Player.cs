@@ -5,12 +5,15 @@ public class Player : MonoBehaviour
 {
     [SerializeField] float walkSpeed = 6f;
     [SerializeField] float runSpeed = 12f;
-    [SerializeField] float crouchSpeed = 3f;
+    [SerializeField] float crouchSpeed = 2f;
+    [SerializeField] Material normal, stealth;
     
     float currSpeed;    
     Vector2 moveInput;
     PlayerInput input;
     Rigidbody rb;
+    public enum PlayerState {Walk, Run, Crouch};
+    public PlayerState state {get; private set;}
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,14 +27,12 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         moveInput = input.actions["Move"].ReadValue<Vector2>();
-        HandleSpeed();
         Move();
     }
 
     void Move()
     {
-        
-
+        HandleSpeed();
         Vector3 playerVelocity = new Vector3(
             moveInput.x * currSpeed,
             rb.linearVelocity.y,
@@ -42,20 +43,32 @@ public class Player : MonoBehaviour
 
     void HandleSpeed() 
     {
+        if(input.actions["Move"].IsPressed()) 
+        {
+            Debug.Log("Walking");
+            ChangeBody(normal);
+            currSpeed = walkSpeed;
+            state = PlayerState.Walk;
+        }   
         if(input.actions["Crouch"].IsPressed()) 
         {
             Debug.Log("Crouching");
+            ChangeBody(stealth);
             currSpeed = crouchSpeed;
+            state = PlayerState.Crouch;
         }
         else if(input.actions["Sprint"].IsPressed())
         {
             Debug.Log("Sprinting");
+            ChangeBody(normal);
             currSpeed = runSpeed;
+            state = PlayerState.Run;
+            
         }
-        else if(moveInput.magnitude > 0)
-        {
-            Debug.Log("Walking");
-            currSpeed = walkSpeed;
-        }
+    }
+
+    void ChangeBody(Material mat)
+    {
+        GetComponent<MeshRenderer>().material = mat;
     }
 }
