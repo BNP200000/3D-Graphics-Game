@@ -19,27 +19,25 @@ public class EnemyDetection : MonoBehaviour
             return false;
 
         // Check if the player is within detection range
-        if (Vector3.Distance(transform.position, player.position) <= detectionRange)
+        /*if (Vector3.Distance(transform.position, player.position) <= detectionRange)
         {
             // Calculate the direction to the player
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
             
             if(!Physics.Raycast(transform.position, directionToPlayer, detectionRange, obstacleLayer)) 
             {
-                if(Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, detectionRange, playerLayer)) 
-                {
-                    if(hit.transform.CompareTag("Player"))
-                    {
-                        return true;
-                    }
-                }
+                return true;
             } 
-            else
-            {
-                Debug.Log("HIT WALL");
-            }
         }
-        return false; // Player is not detected
+        return false; // Player is not detected*/
+
+        // Player is not detected
+        if(Vector3.Distance(transform.position, player.position) > detectionRange)
+            return false;
+
+        // Get the normalized distance from enemy to player
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        return !Physics.Raycast(transform.position, directionToPlayer, detectionRange, obstacleLayer);
     }
 
     public Vector3 GetPlayerPosition()
