@@ -67,6 +67,8 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(true);
         Time.timeScale = 1f;
         paused = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void Exit()
@@ -93,6 +95,11 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         Time.timeScale = 0f;
         paused = true;
+    }
+
+    public void GameOver()
+    {
+
     }
 
     public void Quit()
