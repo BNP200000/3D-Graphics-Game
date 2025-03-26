@@ -1,15 +1,16 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public static bool paused = false; // Check if paused
-    //public VictoryScreenManager victoryScreenManager;
+    public static bool paused = false;
 
     [SerializeField] GameObject pauseUI;
     [SerializeField] GameObject gameUI;
     [SerializeField] GameObject winUI;
+    [SerializeField] GameObject gameOverUI;
 
     void Awake()
     {
@@ -23,13 +24,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         PauseMenu();
@@ -99,16 +93,16 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        gameOverUI.SetActive(true);
+        gameUI.SetActive(false);
+        Time.timeScale = 0f;
+        paused = true;
     }
 
     public void Quit()
     {
         Application.Quit();
     }
-
-    /*public void PlayerWins()
-    {
-        victoryScreenManager.ShowVictoryScreen();
-    }*/
 }
