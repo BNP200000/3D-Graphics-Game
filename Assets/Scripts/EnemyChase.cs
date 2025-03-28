@@ -3,7 +3,10 @@ using UnityEngine.AI;
 
 public class EnemyChase : MonoBehaviour
 {
-    public float chaseSpeed = 5f; // Speed at which the enemy chases the player
+    [Header("Chase Settings")]
+    public float chaseSpeed = 5f;
+    public float chaseRange = 15f;
+    
     private NavMeshAgent agent;
     private Transform player;
 
@@ -16,17 +19,20 @@ public class EnemyChase : MonoBehaviour
     public void StartChasing()
     {
         agent.speed = chaseSpeed;
-        agent.isStopped = false; // Ensure the agent is moving
+        agent.isStopped = false;
     }
 
     public void StopChasing()
     {
-        agent.isStopped = true; // Stop the agent
-        agent.ResetPath(); // Clear the current path
+        agent.isStopped = true;
+        agent.ResetPath();
     }
 
     public void ChasePlayer()
     {
-        agent.SetDestination(player.position); // Move toward the player
+        if (!agent.isStopped)
+        {
+            agent.SetDestination(player.position);
+        }
     }
 }
