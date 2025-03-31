@@ -10,19 +10,19 @@ public class EnemyDetection : MonoBehaviour
     public LayerMask obstacleLayer;
     
     private Transform player;
-    private PlayerMovement playerMovement;
+    //private PlayerMovement playerMovement;
     private float currentDetectionTime;
     private bool wasPlayerVisibleLastFrame;
 
     void Start()
     {
         player = GameObject.FindWithTag("Player").transform;
-        playerMovement = player.GetComponent<PlayerMovement>();
+        //playerMovement = player.GetComponent<PlayerMovement>();
     }
 
     public bool IsPlayerDetected()
     {
-        if (player == null || playerMovement == null) return false;
+        if (player == null) return false;
 
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
