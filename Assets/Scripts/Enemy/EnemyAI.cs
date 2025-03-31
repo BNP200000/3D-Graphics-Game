@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
+    [Header("AI Settings")]
+    public bool resetPatrolOnChaseEnd = true;
+    
     private EnemyPatrol enemyPatrol;
     private EnemyDetection enemyDetection;
     private EnemyChase enemyChase;
@@ -23,10 +26,10 @@ public class EnemyAI : MonoBehaviour
                 StartChasing();
             }
             
-            // Your existing player reset function would trigger here
+            // Your existing player reset would trigger here
             // when IsPlayerDetected() returns true
         }
-        else if (isChasing && Vector3.Distance(transform.position, enemyDetection.GetPlayerPosition()) > enemyChase.chaseRange)
+        else if (isChasing && ShouldStopChasing())
         {
             StopChasing();
         }
@@ -35,6 +38,11 @@ public class EnemyAI : MonoBehaviour
         {
             enemyPatrol.MoveToNextPoint();
         }
+    }
+
+    bool ShouldStopChasing()
+    {
+        return Vector3.Distance(transform.position, enemyDetection.GetPlayerPosition()) > enemyChase.chaseRange;
     }
 
     void StartChasing()
@@ -47,6 +55,6 @@ public class EnemyAI : MonoBehaviour
     {
         isChasing = false;
         enemyChase.StopChasing();
-        enemyPatrol.MoveToNextPoint();
+        if (resetPatrolOnChaseEnd) enemyPatrol.MoveToNextPoint();
     }
 }
