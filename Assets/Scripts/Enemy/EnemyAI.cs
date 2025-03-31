@@ -4,57 +4,82 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("AI Settings")]
     public bool resetPatrolOnChaseEnd = true;
+    public float groundCheckDistance = 2f;
     
-    private EnemyPatrol enemyPatrol;
-    private EnemyDetection enemyDetection;
-    private EnemyChase enemyChase;
-    private bool isChasing = false;
+    private EnemyPatrol _enemyPatrol;
+    private EnemyDetection _enemyDetection;
+    private EnemyChase _enemyChase;
+    private bool _isChasing = false;
+    private bool _isInitialized = false;
+
+    void Awake()
+    {
+        _enemyPatrol = GetComponent<EnemyPatrol>();
+        _enemyDetection = GetComponent<EnemyDetection>();
+        _enemyChase = GetComponent<EnemyChase>();
+        
+        if (_enemyPatrol == null || _enemyDetection == null || _enemyChase == null)
+        {
+            Debug.LogError("Missing required enemy components!", this);
+            enabled = false;
+            return;
+        }
+        
+        _isInitialized = true;
+    }
 
     void Start()
     {
-        enemyPatrol = GetComponent<EnemyPatrol>();
-        enemyDetection = GetComponent<EnemyDetection>();
-        enemyChase = GetComponent<EnemyChase>();
+        if (!_isInitialized) return;
+        
+        if (!_enemyPatrol.CheckNavMeshValidity())
+        {
+            Debug.LogWarning("Agent not on NavMesh - attempting reposition...");
+            TryRepositionEnemy();
+        }
+    }
+
+    void TryRepositionEnemy()
+    {
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, groundCheckDistance))
+        {
+            if (UnityEngine.AI.NavMesh.SamplePosition(hit.point, out UnityEngine.AI.NavMeshHit navHit, 1f, UnityEngine.AI.NavMesh.AllAreas))
+            {
+                transform.position = navHit.position;
+                _enemyPatrol.CheckNavMeshValidity();
+            }
+        }
     }
 
     void Update()
     {
-        if (enemyDetection.IsPlayerDetected())
+        if (!_isInitialized) return;
+
+        if (_enemyDetection.IsPlayerDetected())
         {
-            if (!isChasing)
-            {
-                StartChasing();
-            }
-            
-            // Your existing player reset would trigger here
-            // when IsPlayerDetected() returns true
+            if (!_isChasing) StartChasing();
         }
-        else if (isChasing && ShouldStopChasing())
+        else if (_isChasing && !_enemyChase.IsPlayerInChaseRange())
         {
             StopChasing();
         }
 
-        if (!isChasing && enemyPatrol.HasReachedDestination())
+        if (!_isChasing && _enemyPatrol.HasReachedDestination())
         {
-            enemyPatrol.MoveToNextPoint();
+            _enemyPatrol.MoveToNextPoint();
         }
-    }
-
-    bool ShouldStopChasing()
-    {
-        return Vector3.Distance(transform.position, enemyDetection.GetPlayerPosition()) > enemyChase.chaseRange;
     }
 
     void StartChasing()
     {
-        isChasing = true;
-        enemyChase.StartChasing();
+        _isChasing = true;
+        _enemyChase.StartChasing();
     }
 
     void StopChasing()
     {
-        isChasing = false;
-        enemyChase.StopChasing();
-        if (resetPatrolOnChaseEnd) enemyPatrol.MoveToNextPoint();
+        _isChasing = false;
+        _enemyChase.StopChasing();
+        if (resetPatrolOnChaseEnd) _enemyPatrol.MoveToNextPoint();
     }
 }

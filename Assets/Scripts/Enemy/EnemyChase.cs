@@ -1,48 +1,63 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyChase : MonoBehaviour
 {
     [Header("Chase Settings")]
     public float chaseSpeed = 5f;
     public float chaseRange = 15f;
     
-    private NavMeshAgent agent;
-    private Transform player;
-    private Health playerHealth;
-    [SerializeField] float captureRange = 3.0f;
+    private NavMeshAgent _agent;
+    private Transform _player;
+    private bool _isInitialized = false;
 
-
-    void Start()
+    void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        player = GameObject.Find("Player").transform;
-        playerHealth = FindAnyObjectByType<Health>();
+        _agent = GetComponent<NavMeshAgent>();
+        if (_agent == null)
+        {
+            Debug.LogError("NavMeshAgent component missing!", this);
+            enabled = false;
+            return;
+        }
+
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        if (playerObj != null)
+        {
+            _player = playerObj.transform;
+            _isInitialized = true;
+        }
+        else
+        {
+            Debug.LogError("Player not found!", this);
+            enabled = false;
+        }
     }
 
     public void StartChasing()
     {
-        agent.speed = chaseSpeed;
-        agent.isStopped = false;
+        if (!_isInitialized || !_agent.isOnNavMesh) return;
+        _agent.speed = chaseSpeed;
+        _agent.isStopped = false;
     }
 
     public void StopChasing()
     {
-        agent.isStopped = true;
-        agent.ResetPath();
+        if (!_isInitialized || !_agent.isOnNavMesh) return;
+        _agent.isStopped = true;
+        _agent.ResetPath();
     }
 
     public void ChasePlayer()
     {
-        agent.SetDestination(player.position); // Move toward the player
-        if(Vector3.Distance(transform.position, player.position) <= captureRange) {
-            Capture();
-        }
+        if (!_isInitialized || !_agent.isOnNavMesh || _agent.isStopped || _player == null) return;
+        _agent.SetDestination(_player.position);
     }
 
-    void Capture()
+    public bool IsPlayerInChaseRange()
     {
-        playerHealth.lives -= 1;
-        player.position = new Vector3(0f, 0.5f, 0f);
+        return _isInitialized && _player != null && 
+               Vector3.Distance(transform.position, _player.position) <= chaseRange;
     }
 }
