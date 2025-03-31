@@ -6,63 +6,55 @@ public class EnemyDetection : MonoBehaviour
     public float detectionRange = 10f;
     public float fovAngle = 90f;
     public float catchTimeRequired = 2f;
-    public LayerMask playerLayer;
+    public string playerTag = "Player";
     public LayerMask obstacleLayer;
     
     private Transform player;
     private PlayerMovement playerMovement;
     private float currentDetectionTime;
-    private bool wasPlayerVisibleLastFrame;
+    private bool isInitialized = false;
 
     void Start()
     {
-        player = GameObject.FindWithTag("Player").transform;
-        playerMovement = player.GetComponent<PlayerMovement>();
+        GameObject playerObj = GameObject.FindWithTag(playerTag);
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+            playerMovement = player.GetComponent<PlayerMovement>();
+            isInitialized = true;
+        }
+        else
+        {
+            Debug.LogError($"No GameObject with tag '{playerTag}' found!", this);
+        }
     }
 
     public bool IsPlayerDetected()
     {
-        if (player == null || playerMovement == null) return false;
+        if (!isInitialized || player == null || playerMovement == null) return false;
 
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
 
-        bool isPlayerVisible = distanceToPlayer <= detectionRange && 
-                             angleToPlayer <= fovAngle/2 &&
-                             !Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer) &&
-                             !playerMovement.isCrouching;
-
-        // Update detection timer
-        if (isPlayerVisible)
+        // Check if player is in range and within field of view
+        if (distanceToPlayer <= detectionRange && 
+            Vector3.Angle(transform.forward, directionToPlayer) <= fovAngle/2)
         {
-            currentDetectionTime += Time.deltaTime;
-            wasPlayerVisibleLastFrame = true;
+            // Check line of sight and stealth status
+            if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer) &&
+                !playerMovement.isCrouching)
+            {
+                currentDetectionTime += Time.deltaTime;
+                return currentDetectionTime >= catchTimeRequired;
+            }
         }
-        else if (wasPlayerVisibleLastFrame)
-        {
-            currentDetectionTime = 0f;
-            wasPlayerVisibleLastFrame = false;
-        }
-
-        return currentDetectionTime >= catchTimeRequired;
+        
+        currentDetectionTime = 0f;
+        return false;
     }
 
-    public float GetDetectionProgress() => Mathf.Clamp01(currentDetectionTime / catchTimeRequired);
-    public Vector3 GetPlayerPosition() => player.position;
-
-    void OnDrawGizmosSelected()
+    public Vector3 GetPlayerPosition()
     {
-        // Visualize detection range
-        Gizmos.color = new Color(1, 1, 0, 0.1f);
-        Gizmos.DrawSphere(transform.position, detectionRange);
-
-        // Visualize FoV
-        Gizmos.color = Color.yellow;
-        Vector3 leftRay = Quaternion.Euler(0, -fovAngle/2, 0) * transform.forward * detectionRange;
-        Vector3 rightRay = Quaternion.Euler(0, fovAngle/2, 0) * transform.forward * detectionRange;
-        Gizmos.DrawRay(transform.position, leftRay);
-        Gizmos.DrawRay(transform.position, rightRay);
-        Gizmos.DrawLine(transform.position + leftRay, transform.position + rightRay);
+        return isInitialized && player != null ? player.position : Vector3.zero;
     }
 }
