@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
@@ -111,4 +111,4 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = enabled ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !enabled;
     }
-}
+}*/
