@@ -2,46 +2,67 @@ using UnityEngine;
 
 public class EnemyDetection : MonoBehaviour
 {
-    public float detectionRange = 10f; // Range within which the enemy can detect the player
-    public LayerMask playerLayer; // Layer for the player
-    public LayerMask obstacleLayer; // Layer for obstacles
-    private Transform player; // Reference to the player's transform
+    [Header("Detection Settings")]
+    public float detectionRange = 10f;
+    public float fovAngle = 90f;
+    public float catchTimeRequired = 2f;
+    public LayerMask playerLayer;
+    public LayerMask obstacleLayer;
+    
+    private Transform player;
+    //private PlayerMovement playerMovement;
+    private float currentDetectionTime;
+    private bool wasPlayerVisibleLastFrame;
 
     void Start()
     {
-        // Find the player GameObject by tag
-        player = GameObject.Find("Player").transform;
+        player = GameObject.FindWithTag("Player").transform;
+        //playerMovement = player.GetComponent<PlayerMovement>();
     }
 
     public bool IsPlayerDetected()
     {
-        if(player.GetComponent<Player>().state == Player.PlayerState.Crouch)
-            return false;
+        if (player == null) return false;
 
-        // Check if the player is within detection range
-        /*if (Vector3.Distance(transform.position, player.position) <= detectionRange)
-        {
-            // Calculate the direction to the player
-            Vector3 directionToPlayer = (player.position - transform.position).normalized;
-            
-            if(!Physics.Raycast(transform.position, directionToPlayer, detectionRange, obstacleLayer)) 
-            {
-                return true;
-            } 
-        }
-        return false; // Player is not detected*/
-
-        // Player is not detected
-        if(Vector3.Distance(transform.position, player.position) > detectionRange)
-            return false;
-
-        // Get the normalized distance from enemy to player
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
-        return !Physics.Raycast(transform.position, directionToPlayer, detectionRange, obstacleLayer);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+
+        bool isPlayerVisible = distanceToPlayer <= detectionRange && 
+                             angleToPlayer <= fovAngle/2 &&
+                             !Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer) &&
+                             player.GetComponent<Player>().state != Player.PlayerState.Crouch;
+
+        // Update detection timer
+        if (isPlayerVisible)
+        {
+            currentDetectionTime += Time.deltaTime;
+            wasPlayerVisibleLastFrame = true;
+        }
+        else if (wasPlayerVisibleLastFrame)
+        {
+            currentDetectionTime = 0f;
+            wasPlayerVisibleLastFrame = false;
+        }
+
+        return currentDetectionTime >= catchTimeRequired;
     }
 
-    public Vector3 GetPlayerPosition()
+    public float GetDetectionProgress() => Mathf.Clamp01(currentDetectionTime / catchTimeRequired);
+    public Vector3 GetPlayerPosition() => player.position;
+
+    void OnDrawGizmosSelected()
     {
-        return player.position; // Return the player's position
+        // Visualize detection range
+        Gizmos.color = new Color(1, 1, 0, 0.1f);
+        Gizmos.DrawSphere(transform.position, detectionRange);
+
+        // Visualize FoV
+        Gizmos.color = Color.yellow;
+        Vector3 leftRay = Quaternion.Euler(0, -fovAngle/2, 0) * transform.forward * detectionRange;
+        Vector3 rightRay = Quaternion.Euler(0, fovAngle/2, 0) * transform.forward * detectionRange;
+        Gizmos.DrawRay(transform.position, leftRay);
+        Gizmos.DrawRay(transform.position, rightRay);
+        Gizmos.DrawLine(transform.position + leftRay, transform.position + rightRay);
     }
 }

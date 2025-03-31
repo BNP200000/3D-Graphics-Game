@@ -1,16 +1,17 @@
 using UnityEngine;
 
-public class EnemyAI: MonoBehaviour
+public class EnemyAI : MonoBehaviour
 {
-    public float chaseRange = 15f; // Range within which the enemy will chase the player
+    [Header("AI Settings")]
+    public bool resetPatrolOnChaseEnd = true;
+    
     private EnemyPatrol enemyPatrol;
     private EnemyDetection enemyDetection;
     private EnemyChase enemyChase;
-    private bool isChasing = false; // Track whether the enemy is chasing the player
+    private bool isChasing = false;
 
     void Start()
     {
-        // Get references to other scripts
         enemyPatrol = GetComponent<EnemyPatrol>();
         enemyDetection = GetComponent<EnemyDetection>();
         enemyChase = GetComponent<EnemyChase>();
@@ -18,35 +19,42 @@ public class EnemyAI: MonoBehaviour
 
     void Update()
     {
-        // Check if the player is detected
-        if(enemyDetection.IsPlayerDetected())
+        if (enemyDetection.IsPlayerDetected())
         {
             if (!isChasing)
             {
-                Debug.Log("Player detected: Starting chase.");
-                isChasing = true;
-                enemyChase.StartChasing();
+                StartChasing();
             }
+            
+            // Your existing player reset would trigger here
+            // when IsPlayerDetected() returns true
         }
-        else if (isChasing && Vector3.Distance(transform.position, enemyDetection.GetPlayerPosition()) > chaseRange)
+        else if (isChasing && ShouldStopChasing())
         {
-            Debug.Log("Player out of range. Stopping chase.");
-            isChasing = false;
-            enemyChase.StopChasing();
-            enemyPatrol.MoveToNextPoint(); // Resume patrolling
+            StopChasing();
         }
 
-        // If chasing, move toward the player
-        if(isChasing)
-        {
-            enemyChase.ChasePlayer();
-        }
-        // If not chasing, continue patrolling
-        else if (enemyPatrol.HasReachedDestination())
+        if (!isChasing && enemyPatrol.HasReachedDestination())
         {
             enemyPatrol.MoveToNextPoint();
         }
     }
 
+    bool ShouldStopChasing()
+    {
+        return Vector3.Distance(transform.position, enemyDetection.GetPlayerPosition()) > enemyChase.chaseRange;
+    }
 
+    void StartChasing()
+    {
+        isChasing = true;
+        enemyChase.StartChasing();
+    }
+
+    void StopChasing()
+    {
+        isChasing = false;
+        enemyChase.StopChasing();
+        if (resetPatrolOnChaseEnd) enemyPatrol.MoveToNextPoint();
+    }
 }

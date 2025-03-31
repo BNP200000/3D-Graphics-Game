@@ -1,3 +1,8 @@
+/*
+
+NOTE: PlayerMovement.cs will no longer be used. Use Player.cs
+instead to handle player control.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        /*if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
         {
             moveDirection.y = jumpPower;
         }
@@ -50,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
         if (!characterController.isGrounded)
         {
             moveDirection.y -= gravity * Time.deltaTime;
-        }*/
+        }
 
         if (Input.GetKey(KeyCode.R) && canMove)
         {
@@ -73,4 +78,4 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
     }
-}
+}*/
