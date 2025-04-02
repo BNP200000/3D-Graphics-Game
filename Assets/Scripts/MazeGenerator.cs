@@ -145,48 +145,63 @@ public class MazeGenerator : MonoBehaviour
     // Create a randomized exit placed at any edge point of the grid
     void CreateExit() 
     {
-        MazeCell[] exits = {
-            mazeGrid[mazeDepth - 1, 0], // Top right
-            mazeGrid[mazeWidth - 1, mazeDepth - 1], // Bottom right
-            mazeGrid[0, mazeDepth - 1] // Bottom left
-        };
-        int index = Random.Range(0, exits.Length);
+    MazeCell[] exits = {
+        mazeGrid[mazeDepth - 1, 0],              // Top right
+        mazeGrid[mazeWidth - 1, mazeDepth - 1],  // Bottom right
+        mazeGrid[0, mazeDepth - 1],              // Bottom left
+    };
 
-        GameObject exit = exits[index].gameObject;
-        List<GameObject> children = new List<GameObject>();
-        foreach(Transform child in exit.transform)
-        {
-            if(child.gameObject.activeSelf)
-            {
-                children.Add(child.gameObject);
-            }
-        }
+    int index = Random.Range(0, exits.Length);
+    MazeCell cell = exits[index];
+    GameObject exitWall = null;
 
-        GameObject exitPoint = children[Random.Range(0, children.Count)];
-
-        Transform exitChild = exitPoint.transform.GetChild(0);
-        MeshRenderer exitRenderer = exitChild.GetComponent<MeshRenderer>();
-        exitRenderer.material = goalMaterial;
-        
-        // Change the z scale of the exit point so that it doesn't look weird
-        exitChild.transform.localScale = new Vector3(
-            exitChild.transform.localScale.x,
-            exitChild.transform.localScale.y,
-            0.8f
-        );
-
-        // Scale the box collider to fit 
-        BoxCollider boxCollider = exitPoint.GetComponent<BoxCollider>();
-        if(boxCollider == null) return;
-
-        Vector3 newSize = boxCollider.size;
-        newSize.z = 0.8f;
-        boxCollider.size = newSize;
-
-        // Attach the goal script
-        exitPoint.AddComponent<Goal>();
-        exitPoint.tag = "Goal";
+    switch (index)
+    {
+        case 0: // Top right
+            exitWall = cell.GetBackWall();
+            break;
+        case 1: // Bottom right
+            exitWall = cell.GetRightWall();
+            break;
+        case 2: // Bottom left
+            exitWall = cell.GetLeftWall();
+            break;
+        case 3: // Top left
+            exitWall = cell.GetBackWall();
+            break;
     }
+
+    if (exitWall == null)
+    {
+        Debug.LogWarning("Failed to locate wall for goal.");
+        return;
+    }
+
+    // Visual tweak
+    Transform visualPart = exitWall.transform.GetChild(0);
+    MeshRenderer renderer = visualPart.GetComponent<MeshRenderer>();
+    if (renderer != null) renderer.material = goalMaterial;
+
+    visualPart.localScale = new Vector3(
+        visualPart.localScale.x,
+        visualPart.localScale.y,
+        0.8f
+    );
+
+    BoxCollider collider = exitWall.GetComponent<BoxCollider>();
+    if (collider != null)
+    {
+        Vector3 size = collider.size;
+        size.z = 0.8f;
+        collider.size = size;
+    }
+
+    // Goal logic
+    if (exitWall.GetComponent<Goal>() == null)
+        exitWall.AddComponent<Goal>();
+    exitWall.tag = "Goal";
+}
+
 
     void SpawnEnemy() 
     {
@@ -225,7 +240,13 @@ public class MazeGenerator : MonoBehaviour
                 Instantiate(enemy, spawnPos, Quaternion.identity);
                 validCells.RemoveAt(randomIndex); 
             }
+
+            GetComponent<NavMeshSurface>().BuildNavMesh();
         }
+
+        
     }
+
+    
 
 }

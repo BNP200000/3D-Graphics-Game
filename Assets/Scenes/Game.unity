@@ -649,7 +649,6 @@ GameObject:
   - component: {fileID: 211524833}
   - component: {fileID: 211524839}
   - component: {fileID: 211524838}
-  - component: {fileID: 211524837}
   m_Layer: 0
   m_Name: Player_OLD
   m_TagString: Untagged
@@ -747,18 +746,6 @@ Transform:
   - {fileID: 6385856}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &211524837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 211524832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4611580d115c2e742bd13f689c52bddb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!143 &211524838
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1365,7 +1352,7 @@ GameObject:
   - component: {fileID: 411785721}
   - component: {fileID: 411785720}
   - component: {fileID: 411785719}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -2417,8 +2404,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mazeCell: {fileID: 4539615487733658141, guid: 00d97dac1db5f624d9544b8f23320c18, type: 3}
-  mazeWidth: 15
-  mazeDepth: 15
+  mazeWidth: 20
+  mazeDepth: 20
   goalMaterial: {fileID: 2100000, guid: e08dec6a458609c459a1b8bf82d1ccaa, type: 2}
   safeZone: 7
   enemyCount: 5
@@ -2460,7 +2447,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   m_UseGeometry: 0
   m_DefaultArea: 0
-  m_GenerateLinks: 0
+  m_GenerateLinks: 1
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
   m_OverrideTileSize: 0
