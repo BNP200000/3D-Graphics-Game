@@ -29,11 +29,6 @@ public class GameManager : MonoBehaviour
         PauseMenu();
     }
 
-    public void Reload()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
     public void LoadGame()
     {
         Time.timeScale = 1f;
