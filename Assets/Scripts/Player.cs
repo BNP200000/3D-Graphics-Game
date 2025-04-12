@@ -6,7 +6,10 @@ public class Player : MonoBehaviour
     [SerializeField] float walkSpeed = 6f;
     [SerializeField] float runSpeed = 12f;
     [SerializeField] float crouchSpeed = 2f;
+    public int maxHealth {get; set;} = 3;
+    public Health bar;
     [SerializeField] Material normal, stealth;
+    AudioManager am; // Reference to the AudioManager to play the sounds
     
     float currSpeed;    
     Vector2 moveInput;
@@ -21,6 +24,8 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         input = GetComponent<PlayerInput>();
         currSpeed = walkSpeed;
+        bar.SetMaxHealth(maxHealth);
+        am = FindFirstObjectByType<AudioManager>();
     }
 
     // Update is called once per frame
@@ -64,6 +69,15 @@ public class Player : MonoBehaviour
             currSpeed = runSpeed;
             state = PlayerState.Run;
             
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Wall"))
+        {
+            Debug.Log("HIT");
+            am.Play("Collision");
         }
     }
 

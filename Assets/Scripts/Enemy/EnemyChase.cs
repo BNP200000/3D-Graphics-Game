@@ -6,7 +6,8 @@ public class EnemyChase : MonoBehaviour
     public float chaseSpeed = 5f; // Speed at which the enemy chases the player
     private NavMeshAgent agent;
     private Transform player;
-    private Health playerHealth;
+    //private Health playerHealth;
+    private Player playerScript;
     [SerializeField] float captureRange = 3.0f;
 
 
@@ -14,7 +15,7 @@ public class EnemyChase : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("Player").transform;
-        playerHealth = FindAnyObjectByType<Health>();
+        playerScript = player.GetComponent<Player>();
     }
 
     public void StartChasing()
@@ -39,7 +40,9 @@ public class EnemyChase : MonoBehaviour
 
     void Capture()
     {
-        playerHealth.lives -= 1;
+        //playerHealth.lives -= 1;
+        playerScript.maxHealth -= 1;
+        playerScript.bar.SetHealth(playerScript.maxHealth);
         player.position = new Vector3(0f, 0.5f, 0f);
     }
 }
