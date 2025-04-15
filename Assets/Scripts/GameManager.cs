@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        PauseMenu();
+        Toggle();
     }
 
     public void LoadGame()
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
-    void PauseMenu()
+    void Toggle()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {

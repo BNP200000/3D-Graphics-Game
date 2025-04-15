@@ -337,11 +337,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1357123725}
-  - {fileID: 3617537280803452773}
-  - {fileID: 8284244577230435622}
-  - {fileID: 6621245565594211857}
+  m_Children: []
   m_Father: {fileID: 1558821460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -496,7 +492,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1107584396}
+  m_Father: {fileID: 1558821460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -698,6 +694,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1107584396}
+  - {fileID: 1357123725}
+  - {fileID: 3617537280803452773}
+  - {fileID: 8284244577230435622}
+  - {fileID: 6621245565594211857}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1201,7 +1201,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7692595652642801825, guid: 5f18bb53ad4e0094fb6a197e61cdbb72, type: 3}
+      - m_Target: {fileID: 9087541825306240044, guid: 5f18bb53ad4e0094fb6a197e61cdbb72, type: 3}
         m_TargetAssemblyTypeName: SettingManager, Assembly-CSharp
         m_MethodName: SetSFXVolume
         m_Mode: 0
@@ -1329,7 +1329,7 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1556009818672530171}
-  m_Father: {fileID: 1107584396}
+  m_Father: {fileID: 1558821460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1620,7 +1620,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7692595652642801825, guid: 5f18bb53ad4e0094fb6a197e61cdbb72, type: 3}
+      - m_Target: {fileID: 9087541825306240044, guid: 5f18bb53ad4e0094fb6a197e61cdbb72, type: 3}
         m_TargetAssemblyTypeName: SettingManager, Assembly-CSharp
         m_MethodName: SetBGMVolume
         m_Mode: 0
@@ -1693,7 +1693,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3723892522711344767}
-  m_Father: {fileID: 1107584396}
+  m_Father: {fileID: 1558821460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -1904,7 +1904,7 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8805175895415158355}
-  m_Father: {fileID: 1107584396}
+  m_Father: {fileID: 1558821460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
