@@ -2251,7 +2251,8 @@ MonoBehaviour:
   mazeDepth: 20
   goalMaterial: {fileID: 2100000, guid: e08dec6a458609c459a1b8bf82d1ccaa, type: 2}
   safeZone: 7
-  enemyCount: 5
+  enemyCount: 9
+  enemyPatrols: 3
   enemy: {fileID: 8671834152402839410, guid: bbbc476586fe34db3ac915d1c6a44ad0, type: 3}
 --- !u!4 &858926381
 Transform:
@@ -2930,7 +2931,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3857023648606572346}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: Resume
+        m_MethodName: LoadGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

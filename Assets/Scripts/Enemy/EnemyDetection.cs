@@ -18,19 +18,6 @@ public class EnemyDetection : MonoBehaviour
         if(player.GetComponent<Player>().state == Player.PlayerState.Crouch)
             return false;
 
-        // Check if the player is within detection range
-        /*if (Vector3.Distance(transform.position, player.position) <= detectionRange)
-        {
-            // Calculate the direction to the player
-            Vector3 directionToPlayer = (player.position - transform.position).normalized;
-            
-            if(!Physics.Raycast(transform.position, directionToPlayer, detectionRange, obstacleLayer)) 
-            {
-                return true;
-            } 
-        }
-        return false; // Player is not detected*/
-
         // Player is not detected
         if(Vector3.Distance(transform.position, player.position) > detectionRange)
             return false;

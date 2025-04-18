@@ -1,19 +1,28 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class EnemyPatrol : MonoBehaviour
 {
-    public Transform[] patrolPoints; // Array of patrol points
+    public Transform[] patrolPoints {get; set;} // Array of patrol points
     private int currentPointIndex = 0;
     private NavMeshAgent agent;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        if (patrolPoints.Length > 0)
+        StartCoroutine(WaitForPatrolPoints());
+    }
+
+    // Coroutine to wait until patrol points are initialized
+    private IEnumerator WaitForPatrolPoints()
+    {
+        while (patrolPoints == null || patrolPoints.Length == 0)
         {
-            MoveToNextPoint(); // Start patrolling if there are patrol points
+            yield return null;
         }
+
+        MoveToNextPoint();
     }
 
     public void MoveToNextPoint()

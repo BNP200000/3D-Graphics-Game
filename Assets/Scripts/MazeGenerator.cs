@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.AI.Navigation;
+using NUnit.Framework;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -15,13 +16,13 @@ public class MazeGenerator : MonoBehaviour
 
     [SerializeField] int safeZone = 5;
     [SerializeField] int enemyCount = 5;
+    [SerializeField] int enemyPatrols = 3;
     [SerializeField] GameObject enemy;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         mazeGrid = new MazeCell[mazeWidth, mazeDepth];
-
         for(int i = 0; i < mazeWidth; i++) 
         {
             for(int k = 0; k < mazeDepth; k++)
@@ -145,63 +146,62 @@ public class MazeGenerator : MonoBehaviour
     // Create a randomized exit placed at any edge point of the grid
     void CreateExit() 
     {
-    MazeCell[] exits = {
-        mazeGrid[mazeDepth - 1, 0],              // Top right
-        mazeGrid[mazeWidth - 1, mazeDepth - 1],  // Bottom right
-        mazeGrid[0, mazeDepth - 1],              // Bottom left
-    };
+        MazeCell[] exits = {
+            mazeGrid[mazeDepth - 1, 0],              // Top right
+            mazeGrid[mazeWidth - 1, mazeDepth - 1],  // Bottom right
+            mazeGrid[0, mazeDepth - 1],              // Bottom left
+        };
 
-    int index = Random.Range(0, exits.Length);
-    MazeCell cell = exits[index];
-    GameObject exitWall = null;
+        int index = Random.Range(0, exits.Length);
+        MazeCell cell = exits[index];
+        GameObject exitWall = null;
 
-    switch (index)
-    {
-        case 0: // Top right
-            exitWall = cell.GetBackWall();
-            break;
-        case 1: // Bottom right
-            exitWall = cell.GetRightWall();
-            break;
-        case 2: // Bottom left
-            exitWall = cell.GetLeftWall();
-            break;
-        case 3: // Top left
-            exitWall = cell.GetBackWall();
-            break;
+        switch (index)
+        {
+            case 0: // Top right
+                exitWall = cell.GetBackWall();
+                break;
+            case 1: // Bottom right
+                exitWall = cell.GetRightWall();
+                break;
+            case 2: // Bottom left
+                exitWall = cell.GetLeftWall();
+                break;
+            case 3: // Top left
+                exitWall = cell.GetBackWall();
+                break;
+        }
+
+        if (exitWall == null)
+        {
+            Debug.LogWarning("Failed to locate wall for goal.");
+            return;
+        }
+
+        // Visual tweak
+        Transform visualPart = exitWall.transform.GetChild(0);
+        MeshRenderer renderer = visualPart.GetComponent<MeshRenderer>();
+        if (renderer != null) renderer.material = goalMaterial;
+
+        visualPart.localScale = new Vector3(
+            visualPart.localScale.x,
+            visualPart.localScale.y,
+            0.8f
+        );
+
+        BoxCollider collider = exitWall.GetComponent<BoxCollider>();
+        if (collider != null)
+        {
+            Vector3 size = collider.size;
+            size.z = 0.8f;
+            collider.size = size;
+        }
+
+        // Goal logic
+        if (exitWall.GetComponent<Goal>() == null)
+            exitWall.AddComponent<Goal>();
+        exitWall.tag = "Goal";
     }
-
-    if (exitWall == null)
-    {
-        Debug.LogWarning("Failed to locate wall for goal.");
-        return;
-    }
-
-    // Visual tweak
-    Transform visualPart = exitWall.transform.GetChild(0);
-    MeshRenderer renderer = visualPart.GetComponent<MeshRenderer>();
-    if (renderer != null) renderer.material = goalMaterial;
-
-    visualPart.localScale = new Vector3(
-        visualPart.localScale.x,
-        visualPart.localScale.y,
-        0.8f
-    );
-
-    BoxCollider collider = exitWall.GetComponent<BoxCollider>();
-    if (collider != null)
-    {
-        Vector3 size = collider.size;
-        size.z = 0.8f;
-        collider.size = size;
-    }
-
-    // Goal logic
-    if (exitWall.GetComponent<Goal>() == null)
-        exitWall.AddComponent<Goal>();
-    exitWall.tag = "Goal";
-}
-
 
     void SpawnEnemy() 
     {
@@ -236,17 +236,24 @@ public class MazeGenerator : MonoBehaviour
             if (!tooClose) 
             {
                 enemyPositions.Add(spawnPos);
-                int randIdx = Random.Range(0, enemyCount);
-                Instantiate(enemy, spawnPos, Quaternion.identity);
+
+                List<Transform> patrolPoints = new List<Transform>();
+                HashSet<int> usedIndices = new HashSet<int>();
+
+                while(patrolPoints.Count < enemyPatrols && usedIndices.Count < validCells.Count)
+                {
+                    int patrolIndex = Random.Range(0, validCells.Count);
+                    usedIndices.Add(patrolIndex);
+                    Transform point = validCells[patrolIndex].transform;
+                    patrolPoints.Add(point);
+                }
+
+                GameObject spawnedEnemy = Instantiate(enemy, spawnPos, Quaternion.identity);
+                spawnedEnemy.GetComponent<EnemyPatrol>().patrolPoints = patrolPoints.ToArray();
                 validCells.RemoveAt(randomIndex); 
             }
 
             GetComponent<NavMeshSurface>().BuildNavMesh();
         }
-
-        
     }
-
-    
-
 }
