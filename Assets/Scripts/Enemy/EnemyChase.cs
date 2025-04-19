@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyChase : MonoBehaviour
 {
     public float chaseSpeed = 5f; // Speed at which the enemy chases the player
@@ -11,7 +12,7 @@ public class EnemyChase : MonoBehaviour
     [SerializeField] float captureRange = 3.0f;
 
 
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("Player").transform;

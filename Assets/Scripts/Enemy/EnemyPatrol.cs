@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyPatrol : MonoBehaviour
 {
     public Transform[] patrolPoints {get; set;} // Array of patrol points
