@@ -28,7 +28,7 @@ public class EnemyAI: MonoBehaviour
                 enemyChase.StartChasing();
             }
         }
-        else if (isChasing && Vector3.Distance(transform.position, enemyDetection.GetPlayerPosition()) > chaseRange)
+        else if (isChasing && Vector3.Distance(transform.position, enemyDetection.player.position) > chaseRange)
         {
             Debug.Log("Player out of range. Stopping chase.");
             isChasing = false;
@@ -47,6 +47,4 @@ public class EnemyAI: MonoBehaviour
             enemyPatrol.MoveToNextPoint();
         }
     }
-
-
 }

@@ -3,20 +3,20 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] float walkSpeed = 6f;
-    [SerializeField] float runSpeed = 12f;
-    [SerializeField] float crouchSpeed = 2f;
-    public int maxHealth {get; set;} = 3;
-    public Health bar;
-    [SerializeField] Material normal, stealth;
+    [SerializeField] float walkSpeed = 6f; // Player's normal speed
+    [SerializeField] float runSpeed = 12f; // Player's running speed
+    [SerializeField] float crouchSpeed = 2f; // Player's crouching speed
+    public int maxHealth {get; set;} = 3; // The amount of lives given to the player
+    public Health bar; // A reference to the Player Health Bar
+    [SerializeField] Material normal, stealth; // A reference to the Player material
     AudioManager am; // Reference to the AudioManager to play the sounds
     
-    float currSpeed;    
-    Vector2 moveInput;
-    PlayerInput input;
-    Rigidbody rb;
-    public enum PlayerState {Walk, Run, Crouch};
-    public PlayerState state {get; private set;}
+    float currSpeed; // Used to set the speed of the player based on the state
+    Vector2 moveInput; // Used to define the movement vector for the player 
+    PlayerInput input; // Reference to the PlayerInput component 
+    Rigidbody rb; // Reference to the Rigidbody component
+    public enum PlayerState {Walk, Run, Crouch}; // Player State
+    public PlayerState state {get; private set;} // Reference to the PlayerState
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -27,14 +27,15 @@ public class Player : MonoBehaviour
         bar.SetMaxHealth(maxHealth);
         am = FindFirstObjectByType<AudioManager>();
     }
-
+    
     // Update is called once per frame
     void FixedUpdate()
     {
         moveInput = input.actions["Move"].ReadValue<Vector2>();
         Move();
     }
-
+    
+    // Move the player in the intended XZ coordinate plane
     void Move()
     {
         HandleSpeed();
@@ -46,6 +47,7 @@ public class Player : MonoBehaviour
         rb.linearVelocity = transform.TransformDirection(playerVelocity);
     }
 
+    // Alternate the player speed based on which action is pressed
     void HandleSpeed() 
     {
         if(input.actions["Move"].IsPressed()) 
@@ -72,15 +74,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Play collision sound effect on wall hit
     void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.CompareTag("Wall"))
         {
-            Debug.Log("HIT");
             am.Play("Collision");
         }
     }
 
+    // Change the material of the player object
     void ChangeBody(Material mat)
     {
         GetComponent<MeshRenderer>().material = mat;
