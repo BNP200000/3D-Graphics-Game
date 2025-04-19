@@ -5,7 +5,7 @@ public class EnemyDetection : MonoBehaviour
     public float detectionRange = 10f; // Range within which the enemy can detect the player
     public LayerMask playerLayer; // Layer for the player
     public LayerMask obstacleLayer; // Layer for obstacles
-    private Transform player; // Reference to the player's transform
+    public Transform player {get; private set;} // Reference to the player's transform
 
     void Start()
     {
@@ -25,10 +25,5 @@ public class EnemyDetection : MonoBehaviour
         // Get the normalized distance from enemy to player
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         return !Physics.Raycast(transform.position, directionToPlayer, detectionRange, obstacleLayer);
-    }
-
-    public Vector3 GetPlayerPosition()
-    {
-        return player.position; // Return the player's position
     }
 }
