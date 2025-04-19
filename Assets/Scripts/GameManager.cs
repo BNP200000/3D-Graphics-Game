@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         Toggle();
+        GameOver();
     }
 
     public void LoadGame()

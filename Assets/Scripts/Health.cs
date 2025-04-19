@@ -21,22 +21,4 @@ public class Health : MonoBehaviour
         slider.value = health;
         fill.color = gradient.Evaluate(slider.normalizedValue);
     }
-
-    void Start()
-    {
-        //lives = hearts.Length;
-    }
-
-    void Update()
-    {
-        /*for(int i = 0; i < hearts.Length; i++) 
-        {
-            hearts[i].SetActive(i < lives);
-        }
-
-        if (lives <= 0)
-        {
-            GameManager.instance.GameOver();
-        }*/
-    }
 }

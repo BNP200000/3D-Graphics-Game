@@ -11,7 +11,7 @@ public class EnemyChase : MonoBehaviour
     [SerializeField] float captureRange = 3.0f;
     AudioManager am; // Reference to the AudioManager to play the sounds
 
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("Player").transform;

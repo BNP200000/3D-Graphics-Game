@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
         bar.SetMaxHealth(maxHealth);
         am = FindFirstObjectByType<AudioManager>();
     }
-
+    
     // Update is called once per frame
     void FixedUpdate()
     {

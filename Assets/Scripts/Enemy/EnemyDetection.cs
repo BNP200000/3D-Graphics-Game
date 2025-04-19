@@ -7,7 +7,7 @@ public class EnemyDetection : MonoBehaviour
     public LayerMask obstacleLayer; // Layer for obstacles
     public Transform player {get; private set;} // Reference to the player's transform
 
-    void Start()
+    void Awake()
     {
         // Find the player GameObject by tag
         player = GameObject.Find("Player").transform;
