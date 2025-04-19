@@ -58,6 +58,12 @@ MonoBehaviour:
     pitch: 1
     source: {fileID: 0}
     loop: 0
+  - name: Capture
+    clip: {fileID: 8300000, guid: 9c7ac3fd326c60a4c9b675f547ccb56b, type: 3}
+    volume: 0.6
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
 --- !u!114 &9087541825306240044
 MonoBehaviour:
   m_ObjectHideFlags: 0
