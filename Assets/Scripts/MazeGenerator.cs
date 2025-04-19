@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.AI.Navigation;
+using NUnit.Framework;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -15,13 +16,13 @@ public class MazeGenerator : MonoBehaviour
 
     [SerializeField] int safeZone = 5;
     [SerializeField] int enemyCount = 5;
+    [SerializeField] int enemyPatrols = 3;
     [SerializeField] GameObject enemy;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         mazeGrid = new MazeCell[mazeWidth, mazeDepth];
-
         for(int i = 0; i < mazeWidth; i++) 
         {
             for(int k = 0; k < mazeDepth; k++)
@@ -146,46 +147,60 @@ public class MazeGenerator : MonoBehaviour
     void CreateExit() 
     {
         MazeCell[] exits = {
-            mazeGrid[mazeDepth - 1, 0], // Top right
-            mazeGrid[mazeWidth - 1, mazeDepth - 1], // Bottom right
-            mazeGrid[0, mazeDepth - 1] // Bottom left
+            mazeGrid[mazeDepth - 1, 0],              // Top right
+            mazeGrid[mazeWidth - 1, mazeDepth - 1],  // Bottom right
+            mazeGrid[0, mazeDepth - 1],              // Bottom left
         };
-        int index = Random.Range(0, exits.Length);
 
-        GameObject exit = exits[index].gameObject;
-        List<GameObject> children = new List<GameObject>();
-        foreach(Transform child in exit.transform)
+        int index = Random.Range(0, exits.Length);
+        MazeCell cell = exits[index];
+        GameObject exitWall = null;
+
+        switch (index)
         {
-            if(child.gameObject.activeSelf)
-            {
-                children.Add(child.gameObject);
-            }
+            case 0: // Top right
+                exitWall = cell.GetBackWall();
+                break;
+            case 1: // Bottom right
+                exitWall = cell.GetRightWall();
+                break;
+            case 2: // Bottom left
+                exitWall = cell.GetLeftWall();
+                break;
+            case 3: // Top left
+                exitWall = cell.GetBackWall();
+                break;
         }
 
-        GameObject exitPoint = children[Random.Range(0, children.Count)];
+        if (exitWall == null)
+        {
+            Debug.LogWarning("Failed to locate wall for goal.");
+            return;
+        }
 
-        Transform exitChild = exitPoint.transform.GetChild(0);
-        MeshRenderer exitRenderer = exitChild.GetComponent<MeshRenderer>();
-        exitRenderer.material = goalMaterial;
-        
-        // Change the z scale of the exit point so that it doesn't look weird
-        exitChild.transform.localScale = new Vector3(
-            exitChild.transform.localScale.x,
-            exitChild.transform.localScale.y,
+        // Visual tweak
+        Transform visualPart = exitWall.transform.GetChild(0);
+        MeshRenderer renderer = visualPart.GetComponent<MeshRenderer>();
+        if (renderer != null) renderer.material = goalMaterial;
+
+        visualPart.localScale = new Vector3(
+            visualPart.localScale.x,
+            visualPart.localScale.y,
             0.8f
         );
 
-        // Scale the box collider to fit 
-        BoxCollider boxCollider = exitPoint.GetComponent<BoxCollider>();
-        if(boxCollider == null) return;
+        BoxCollider collider = exitWall.GetComponent<BoxCollider>();
+        if (collider != null)
+        {
+            Vector3 size = collider.size;
+            size.z = 0.8f;
+            collider.size = size;
+        }
 
-        Vector3 newSize = boxCollider.size;
-        newSize.z = 0.8f;
-        boxCollider.size = newSize;
-
-        // Attach the goal script
-        exitPoint.AddComponent<Goal>();
-        exitPoint.tag = "Goal";
+        // Goal logic
+        if (exitWall.GetComponent<Goal>() == null)
+            exitWall.AddComponent<Goal>();
+        exitWall.tag = "Goal";
     }
 
     void SpawnEnemy() 
@@ -221,11 +236,24 @@ public class MazeGenerator : MonoBehaviour
             if (!tooClose) 
             {
                 enemyPositions.Add(spawnPos);
-                int randIdx = Random.Range(0, enemyCount);
-                Instantiate(enemy, spawnPos, Quaternion.identity);
+
+                List<Transform> patrolPoints = new List<Transform>();
+                HashSet<int> usedIndices = new HashSet<int>();
+
+                while(patrolPoints.Count < enemyPatrols && usedIndices.Count < validCells.Count)
+                {
+                    int patrolIndex = Random.Range(0, validCells.Count);
+                    usedIndices.Add(patrolIndex);
+                    Transform point = validCells[patrolIndex].transform;
+                    patrolPoints.Add(point);
+                }
+
+                GameObject spawnedEnemy = Instantiate(enemy, spawnPos, Quaternion.identity);
+                spawnedEnemy.GetComponent<EnemyPatrol>().patrolPoints = patrolPoints.ToArray();
                 validCells.RemoveAt(randomIndex); 
             }
+
+            GetComponent<NavMeshSurface>().BuildNavMesh();
         }
     }
-
 }

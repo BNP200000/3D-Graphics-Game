@@ -1,63 +1,45 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyPatrol : MonoBehaviour
 {
-    [Header("Patrol Settings")]
-    public Transform[] patrolPoints;
-    public float patrolSpeed = 3f;
-    
-    private NavMeshAgent _agent;
-    private int _currentPointIndex = 0;
-    private bool _isInitialized = false;
-
-    void Awake()
-    {
-        _agent = GetComponent<NavMeshAgent>();
-        if (_agent == null)
-        {
-            Debug.LogError("NavMeshAgent component missing!", this);
-            enabled = false;
-            return;
-        }
-        
-        _agent.speed = patrolSpeed;
-        _isInitialized = true;
-    }
+    public Transform[] patrolPoints {get; set;} // Array of patrol points
+    private int currentPointIndex = 0;
+    private NavMeshAgent agent;
 
     void Start()
     {
-        if (_isInitialized && patrolPoints.Length > 0 && _agent.isOnNavMesh)
-        {
-            MoveToNextPoint();
-        }
+        agent = GetComponent<NavMeshAgent>();
+        StartCoroutine(WaitForPatrolPoints());
     }
 
-    public bool CheckNavMeshValidity()
+    // Coroutine to wait until patrol points are initialized
+    private IEnumerator WaitForPatrolPoints()
     {
-        if (!_isInitialized) return false;
-        
-        if (!_agent.isOnNavMesh)
+        while (patrolPoints == null || patrolPoints.Length == 0)
         {
-            return _agent.Warp(transform.position);
+            yield return null;
         }
-        return true;
+
+        MoveToNextPoint();
     }
 
     public void MoveToNextPoint()
     {
-        if (!_isInitialized || patrolPoints.Length == 0 || !_agent.isOnNavMesh) return;
-        
-        _agent.destination = patrolPoints[_currentPointIndex].position;
-        _currentPointIndex = (_currentPointIndex + 1) % patrolPoints.Length;
+        if (patrolPoints.Length == 0) return;
+
+        // Set the destination to the next patrol point
+        agent.destination = patrolPoints[currentPointIndex].position;
+
+        // Move to the next point in the array (loop back to the start if necessary)
+        currentPointIndex = (currentPointIndex + 1) % patrolPoints.Length;
     }
 
     public bool HasReachedDestination()
     {
-        if (!_isInitialized || !_agent.isOnNavMesh || _agent.pathPending) return false;
-        
-        return _agent.remainingDistance <= _agent.stoppingDistance && 
-               (!_agent.hasPath || _agent.velocity.sqrMagnitude == 0f);
+        // Check if the enemy has reached its destination
+        return !agent.pathPending && agent.remainingDistance < 0.5f;
     }
 }

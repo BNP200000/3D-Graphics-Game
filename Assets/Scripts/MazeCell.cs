@@ -2,10 +2,15 @@ using UnityEngine;
 
 public class MazeCell : MonoBehaviour
 {
-    [SerializeField] GameObject leftWall, rightWall, frontWall, backWall, unvisitedBlock;
-    public bool isVisited {get; private set;}
+    [SerializeField] GameObject leftWall;
+    [SerializeField] GameObject rightWall;
+    [SerializeField] GameObject frontWall;
+    [SerializeField] GameObject backWall;
+    [SerializeField] GameObject unvisitedBlock;
 
-    // Remove a block upon visit    
+    
+    public bool isVisited { get; private set; }
+    // Remove a block upon visit
     public void Visit()
     {
         isVisited = true;
@@ -17,22 +22,25 @@ public class MazeCell : MonoBehaviour
     {
         leftWall.SetActive(false);
     }
-
     // Disable right wall
     public void ClearRightWall()
     {
         rightWall.SetActive(false);
     }
-
     // Disable front wall
     public void ClearFrontWall()
     {
         frontWall.SetActive(false);
     }
-
     // Disable back wall
     public void ClearBackWall()
     {
         backWall.SetActive(false);
     }
+
+    // Wall accessors for exit placement
+    public GameObject GetLeftWall() => leftWall;
+    public GameObject GetRightWall() => rightWall;
+    public GameObject GetFrontWall() => frontWall;
+    public GameObject GetBackWall() => backWall;
 }

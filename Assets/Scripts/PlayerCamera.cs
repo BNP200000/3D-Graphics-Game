@@ -4,10 +4,9 @@ public class PlayerCamera : MonoBehaviour
 {
     [SerializeField] float mouseSensitivity = 2f; // Camera rotation sensitivity
     [SerializeField] float rotationLimit = 45f;
-    //[SerializeField] Camera frontCamera;
     [SerializeField] Transform player;
 
-    float xRotation = 0f, yRotation = 0f; // The x rotation of the camera
+    float xRotation = 0f; // The x rotation of the camera
 
     void Start()
     {
