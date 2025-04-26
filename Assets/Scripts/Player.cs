@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
     [SerializeField] float walkSpeed = 6f; // Player's normal speed
     [SerializeField] float runSpeed = 12f; // Player's running speed
     [SerializeField] float crouchSpeed = 2f; // Player's crouching speed
+    [SerializeField] Animator anim; // Animator component
     public int maxHealth {get; set;} = 3; // The amount of lives given to the player
     public Health bar; // A reference to the Player Health Bar
     [SerializeField] Material normal, stealth; // A reference to the Player material
@@ -26,12 +27,23 @@ public class Player : MonoBehaviour
         currSpeed = walkSpeed;
         bar.SetMaxHealth(maxHealth);
         am = FindFirstObjectByType<AudioManager>();
+        anim.SetBool("isIdle", true);
+        anim.SetBool("isWalking", false);
+        anim.SetBool("isRunning", false);
+        anim.SetBool("isCrouching", false);
     }
     
     // Update is called once per frame
     void FixedUpdate()
     {
         moveInput = input.actions["Move"].ReadValue<Vector2>();
+        if(moveInput == Vector2.zero)
+        {
+            anim.SetBool("isIdle", true);
+            anim.SetBool("isWalking", false);
+            anim.SetBool("isRunning", false);
+            anim.SetBool("isCrouching", false);
+        }
         Move();
     }
     
@@ -56,6 +68,11 @@ public class Player : MonoBehaviour
             ChangeBody(normal);
             currSpeed = walkSpeed;
             state = PlayerState.Walk;
+
+            anim.SetBool("isIdle", false);
+            anim.SetBool("isWalking", true);
+            anim.SetBool("isRunning", false);
+            anim.SetBool("isCrouching", false);
         }   
         if(input.actions["Crouch"].IsPressed()) 
         {
@@ -63,6 +80,11 @@ public class Player : MonoBehaviour
             ChangeBody(stealth);
             currSpeed = crouchSpeed;
             state = PlayerState.Crouch;
+
+            anim.SetBool("isIdle", false);
+            anim.SetBool("isWalking", false);
+            anim.SetBool("isRunning", false);
+            anim.SetBool("isCrouching", true);
         }
         else if(input.actions["Sprint"].IsPressed())
         {
@@ -71,6 +93,10 @@ public class Player : MonoBehaviour
             currSpeed = runSpeed;
             state = PlayerState.Run;
             
+            anim.SetBool("isIdle", false);
+            anim.SetBool("isWalking", false);
+            anim.SetBool("isRunning", true);
+            anim.SetBool("isCrouching", false);
         }
     }
 
