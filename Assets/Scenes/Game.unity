@@ -911,6 +911,7 @@ GameObject:
   - component: {fileID: 411785721}
   - component: {fileID: 411785720}
   - component: {fileID: 411785719}
+  - component: {fileID: 411785726}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -963,6 +964,7 @@ MonoBehaviour:
   walkSpeed: 5
   runSpeed: 8
   crouchSpeed: 2
+  anim: {fileID: 938765605}
   bar: {fileID: 1319704557}
   normal: {fileID: 2100000, guid: 1dc6d91b4d90b39428862d4946957359, type: 2}
   stealth: {fileID: 2100000, guid: 51cf6dc3720454c499a741143c3b4cd5, type: 2}
@@ -1076,6 +1078,20 @@ Transform:
   - {fileID: 146687032}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &411785726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411785718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9786965181de4fd4aa6459331227d010, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCam: {fileID: 2014983896}
+  worldCam: {fileID: 625156327}
 --- !u!1 &459259904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1585,13 +1601,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 625156325}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7660445, z: 0.6427876, w: 0}
-  m_LocalPosition: {x: 10, y: 20, z: 14}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0.7071068, w: 0}
+  m_LocalPosition: {x: 25, y: 60, z: 25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 80, y: -180, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: -180, z: 0}
 --- !u!1 &753897720
 GameObject:
   m_ObjectHideFlags: 0
@@ -2232,6 +2248,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1abbaa5d03fd6554ba9325fed7bbc0ff, type: 3}
+--- !u!95 &938765605 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5948813168825883684, guid: 1abbaa5d03fd6554ba9325fed7bbc0ff, type: 3}
+  m_PrefabInstance: {fileID: 938765604}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &949268426
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4364,7 +4385,7 @@ GameObject:
   - component: {fileID: 2014983895}
   - component: {fileID: 2014983894}
   m_Layer: 0
-  m_Name: Camera
+  m_Name: Player Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
