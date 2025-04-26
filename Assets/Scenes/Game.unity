@@ -2232,6 +2232,10 @@ PrefabInstance:
       value: Ch14_nonPBR
       objectReference: {fileID: 0}
     - target: {fileID: 5948813168825883684, guid: 1abbaa5d03fd6554ba9325fed7bbc0ff, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 41df12dd04ac15d4cae66c60bf84bbb0, type: 3}
+    - target: {fileID: 5948813168825883684, guid: 1abbaa5d03fd6554ba9325fed7bbc0ff, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 3d6bfc3e78a7286498061e0a9869b7b3, type: 2}
