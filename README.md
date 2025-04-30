@@ -19,7 +19,11 @@ A 3D maze game with stealth mechanics for the CS 4361 Computer Graphics Course
 
 ### Running the Game
 
-* After building the project, open the .exe file with the same name as the project name 
+* After building the project, open the .exe file with the same name as the project name
+  
+### Model
+* Player model and rigging taken from Mixamo  
+* https://www.mixamo.com/#/?page=1&query=mouse&type=Character
 
 ## License
 
